@@ -76,16 +76,33 @@ def main():
             validMoves = gs.getValidMoves()
             moveMade = False
 
-        drawGameState(screen, gs)
+        drawGameState(screen, gs, validMoves, sqSelected)
         clock.tick(MAX_FPS)
         p.display.flip()
 
 '''
+Highlight square selected and moves for piece selected
+'''
+def highlightSquares(screen, gs, validMoves, sqSelected):
+    if sqSelected != ():
+        r, c = sqSelected
+        if gs.board[r][c][0] == ('w' if gs.whiteToMove else 'b'):
+            s = p.Surface((SQ_SIZE, SQ_SIZE))
+            s.set_alpha(100) # 0 - transparent ; 255 - opaque
+            s.fill(p.Color('blue'))
+            screen.blit(s, (c*SQ_SIZE, r*SQ_SIZE))
+            s.fill(p.Color('blue'))
+            for move in validMoves:
+                if move.startRow == r and move.startCol == c:
+                    screen.blit(s, (SQ_SIZE * move.endCol, SQ_SIZE * move.endRow))
+
+
+'''
 Responsible for all graphics within a current game state
 '''
-def drawGameState(screen, gs):
+def drawGameState(screen, gs, validMoves, sqSelected):
     drawBoard(screen) # Draw Board
-    # Add in piece highlighting or move suggestions
+    highlightSquares(screen, gs, validMoves, sqSelected) # Add in piece highlighting or move suggestions
     drawPieces(screen, gs.board) # Draw Pieces
 
 
